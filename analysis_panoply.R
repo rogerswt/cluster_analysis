@@ -106,7 +106,7 @@ for (i in 1:nclust) {
   bg_col = ifelse(padj[i] <= 0.05, "red", "black")
   fmla = formula(tight(clus, " ~ age_range"))
   tit = sprintf("%s (%.1e)", clus, padj[i])
-  boxplot(fmla, data = sadistics, col =c("lightgreen", "lightblue", "pink"), ylab = '', main = tit, col.main = bg_col)
+  boxplot(fmla, data = sadistics, col = c("lightgreen", "lightblue", "pink"), ylab = '', main = tit, col.main = bg_col)
 }
 par(opar)
 
