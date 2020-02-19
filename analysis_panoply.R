@@ -92,17 +92,23 @@ age_cat = factor(age_cat)
 
 sadistics = cbind(age_range = age_cat, sadistics)
 
-# make some boxplots and calculate p-values using the wilcoxon rank sum test
+# calculate p-values using the wilcoxon rank sum test
 # with Benjamini-Hochberg adjustment for multiple comparisons
-opar = par(mfrow = c(8, 7), mar = c(2, 2, 2, 0))
-pval = padj = vector('numeric')
 idx_young = which(sadistics$age_range == '1_young')
 idx_old = which(sadistics$age_range == '3_old')
+pval = padj = vector('numeric')
+for (i in 1:nclust) {
+  clus = tight("cluster_", i)
+  pval[i] = wilcox.test(sadistics[idx_young, clus], sadistics[idx_old, clus], exact = FALSE)$p.value
+}
+padj = p.adjust(pval, method = "BH")
+
+# make some boxplots
+opar = par(mfrow = c(8, 7), mar = c(2, 2, 2, 0))
+
 for (i in 1:nclust) {
   clus = tight("cluster_", i)
 
-  pval[i] = wilcox.test(sadistics[idx_young, clus], sadistics[idx_old, clus])$p.value
-  padj[i] = p.adjust(pval[i], method = "BH")
   bg_col = ifelse(padj[i] <= 0.05, "red", "black")
   fmla = formula(tight(clus, " ~ age_range"))
   tit = sprintf("%s (%.1e)", clus, padj[i])
